@@ -1,0 +1,23 @@
+datasource db {
+  provider = "mysql"
+  url      = env("DB_URL")
+}
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+
+model Menu {
+  menu_id   Int     @id @default(autoincrement()) // Assuming primary key
+  menu_name String? @unique
+  meta_desc String? 
+  meta_key  String? 
+  page_cn   String? 
+  img1      String? 
+  img2      String? 
+  type      String? 
+  activity  String? 
+
+  @@map("menu") // Map to the actual SQL table name
+}
