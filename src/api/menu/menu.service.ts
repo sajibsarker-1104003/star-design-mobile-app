@@ -5,9 +5,7 @@ import { CreateMenuDto, UpdateMenuDto } from './dto';
 
 @Injectable()
 export class MenuService {
-	constructor(
-		private prisma: PrismaService,
-	) {}
+	constructor(private prisma: PrismaService) {}
 
 	menuSelectOptions = {
 		menu_id: true,
@@ -18,7 +16,8 @@ export class MenuService {
 		img1: true,
 		img2: true,
 		type: true,
-		activity: true
+		activity: true,
+		subMenus: true
 	};
 
 	async create(createDto: CreateMenuDto): Promise<IServiceData> {
@@ -34,10 +33,7 @@ export class MenuService {
 	}
 
 	async findAll(): Promise<IServiceData> {
-		const cacheKey = 'all_menus';
-
 		try {
-
 			const menus = await this.prisma.menu.findMany({
 				select: this.menuSelectOptions
 			});
@@ -49,10 +45,34 @@ export class MenuService {
 		}
 	}
 
-	async findOne(menu_id: number): Promise<IServiceData> {
-
+	async findAllSubMenus(): Promise<IServiceData> {
 		try {
+			const menus = await this.prisma.subMenu.findMany({
+				include: {
+					menu: true
+				}
+			});
 
+			return { data: menus };
+		} catch (e) {
+			console.error('[ERROR] findAll menus:', e);
+			return { prismaError: e };
+		}
+	}
+
+	async findAllSlides(): Promise<IServiceData> {
+		try {
+			const menus = await this.prisma.slideImage.findMany({});
+
+			return { data: menus };
+		} catch (e) {
+			console.error('[ERROR] findAll menus:', e);
+			return { prismaError: e };
+		}
+	}
+
+	async findOne(menu_id: number): Promise<IServiceData> {
+		try {
 			const menu = await this.prisma.menu.findUnique({
 				where: { menu_id },
 				select: this.menuSelectOptions

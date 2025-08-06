@@ -17,8 +17,40 @@ model Menu {
   page_cn   String? 
   img1      String? 
   img2      String? 
-  type      String? 
-  activity  String? 
+  type      Boolean @default(true)
+  activity  Boolean @default(true)
+
+  
+  subMenus  SubMenu[] // 👈 Relation to SubMenu
 
   @@map("menu") // Map to the actual SQL table name
 }
+
+model SubMenu {
+  sub_menu_id Int      @id @default(autoincrement())
+  sub_menu    String?
+  menu_id     Int
+  menu        Menu    @relation(fields: [menu_id], references: [menu_id])
+  menu_name   String?  // duplicated from Menu
+  meta_desc   String?  
+  meta_key    String?  
+  page_cn     String?  
+  img1        String?  
+  img2        String?  
+  activity    Boolean @default(true)
+
+  @@map("sub_menu")
+}
+
+model SlideImage {
+  id        Int      @id @default(autoincrement())
+  title_one String   @unique
+  title_two String?
+  img1      String?
+  img2      String?
+  url       String?
+  time      DateTime
+
+  @@map("slideImage") // Change to your actual table name if needed
+}
+
