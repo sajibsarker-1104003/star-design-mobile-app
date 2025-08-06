@@ -9,19 +9,16 @@ import {
   UseInterceptors,
   UseGuards
 } from '@nestjs/common';
-import { CacheInterceptor } from '@nestjs/cache-manager';
 import { ApiBearerAuth, ApiTags } from '@nestjs/swagger';
 
 import { MenuService } from './menu.service';
 import { CreateMenuDto, UpdateMenuDto } from './dto';
 import { ControllerErrorHandler } from '@/shared/error-handlers';
 import { IServiceData } from '@/shared/interfaces';
-import { AuthAccess } from '@/guards';
 
-@ApiBearerAuth()
-@UseGuards(AuthAccess)
+
+
 @ApiTags('menu')
-@UseInterceptors(CacheInterceptor)
 @Controller('menu')
 export class MenuController {
   constructor(

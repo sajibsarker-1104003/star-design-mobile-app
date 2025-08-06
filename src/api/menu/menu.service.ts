@@ -1,6 +1,4 @@
 import { Injectable, Inject } from '@nestjs/common';
-import { CACHE_MANAGER } from '@nestjs/cache-manager';
-import { Cache } from 'cache-manager';
 import { PrismaService } from '@/prisma/prisma.service';
 import { IServiceData, ServiceError } from '@/shared/interfaces';
 import { CreateMenuDto, UpdateMenuDto } from './dto';
@@ -52,10 +50,8 @@ export class MenuService {
 	}
 
 	async findOne(menu_id: number): Promise<IServiceData> {
-		const cacheKey = `menu_${menu_id}`;
 
 		try {
-
 
 			const menu = await this.prisma.menu.findUnique({
 				where: { menu_id },
