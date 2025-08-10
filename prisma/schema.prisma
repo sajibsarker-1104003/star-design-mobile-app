@@ -54,3 +54,52 @@ model SlideImage {
   @@map("slideImage") // Change to your actual table name if needed
 }
 
+model Category {
+  category_id   Int           @id @default(autoincrement())
+  name          String        @unique
+  description   String?
+  img_url       String? @db.VarChar(255)
+  active        Boolean       @default(true)
+
+  subcategories Subcategory[]
+  products      Product[]
+
+  @@map("category")
+}
+
+model Subcategory {
+  subcategory_id Int           @id @default(autoincrement())
+  name           String
+  description    String?
+  img_url        String?  @db.VarChar(255)
+  active         Boolean       @default(true)
+
+  category_id    Int
+  category       Category      @relation(fields: [category_id], references: [category_id], onDelete: Cascade)
+
+  products       Product[]
+
+  @@unique([name, category_id]) // Ensures name is unique within a category
+  @@map("subcategory")
+}
+
+model Product {
+  product_id     Int           @id @default(autoincrement())
+  name           String
+  description    String?
+  price          Float
+  img_url        String?   @db.VarChar(255)
+  active         Boolean       @default(true)
+
+  category_id    Int?
+  subcategory_id Int?
+
+  category       Category?     @relation(fields: [category_id], references: [category_id], onDelete: SetNull)
+  subcategory    Subcategory?  @relation(fields: [subcategory_id], references: [subcategory_id], onDelete: SetNull)
+
+  @@unique([name, category_id])
+  @@unique([name, subcategory_id])
+
+  
+  @@map("product")
+}

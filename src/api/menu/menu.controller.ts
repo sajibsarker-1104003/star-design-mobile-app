@@ -42,6 +42,30 @@ export class MenuController {
 		return this.controllerErrorHandler.handleResponse(response);
 	}
 
+	@Get('category/get')
+	async findAllCategory() {
+		const response: IServiceData = await this.menuService.findAllCategories();
+		return this.controllerErrorHandler.handleResponse(response);
+	}
+
+	@Get('sub-category/get')
+	async findAllSubCategory() {
+		const response: IServiceData = await this.menuService.findAllSubCategories();
+		return this.controllerErrorHandler.handleResponse(response);
+	}
+
+	@Get('product/get')
+	async findAllProduct() {
+		const response: IServiceData = await this.menuService.findAllProducts();
+		return this.controllerErrorHandler.handleResponse(response);
+	}
+
+	@Get('home/get')
+	async findHome() {
+		const response: IServiceData = await this.menuService.findAllData();
+		return this.controllerErrorHandler.handleResponse(response);
+	}
+
 	@Get(':id')
 	async findOne(@Param('id') id: number) {
 		const response: IServiceData = await this.menuService.findOne(id);

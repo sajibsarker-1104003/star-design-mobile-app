@@ -71,6 +71,58 @@ export class MenuService {
 		}
 	}
 
+	async findAllCategories(): Promise<IServiceData> {
+		try {
+			const menus = await this.prisma.category.findMany({
+				include: {
+					subcategories: true,
+					products: true
+				}
+			});
+
+			return { data: menus };
+		} catch (e) {
+			console.error('[ERROR] findAll menus:', e);
+			return { prismaError: e };
+		}
+	}
+
+	async findAllSubCategories(): Promise<IServiceData> {
+		try {
+			const menus = await this.prisma.subcategory.findMany({
+				include: {
+					category: true,
+					products: true
+				}
+			});
+
+			return { data: menus };
+		} catch (e) {
+			console.error('[ERROR] findAll menus:', e);
+			return { prismaError: e };
+		}
+	}
+
+	async findAllProducts(): Promise<IServiceData> {
+		try {
+			const menus = await this.prisma.product.findMany({
+				include: {
+					category: true,
+					subcategory: {
+						include: {
+							category: true
+						}
+					}
+				}
+			});
+
+			return { data: menus };
+		} catch (e) {
+			console.error('[ERROR] findAll menus:', e);
+			return { prismaError: e };
+		}
+	}
+
 	async findOne(menu_id: number): Promise<IServiceData> {
 		try {
 			const menu = await this.prisma.menu.findUnique({
@@ -87,6 +139,39 @@ export class MenuService {
 			return { data: menu };
 		} catch (e) {
 			console.error(`[ERROR] findOne(${menu_id}):`, e);
+			return { prismaError: e };
+		}
+	}
+
+	async findAllData(): Promise<IServiceData> {
+		try {
+			// Fetch all data in parallel for performance
+			const [menus, subMenus, slides, categories, subcategories, products] = await Promise.all([
+				this.prisma.menu.findMany({ select: this.menuSelectOptions }),
+				this.prisma.subMenu.findMany({ include: { menu: true } }),
+				this.prisma.slideImage.findMany(),
+				this.prisma.category.findMany({ include: { subcategories: true, products: true } }),
+				this.prisma.subcategory.findMany({ include: { category: true, products: true } }),
+				this.prisma.product.findMany({
+					include: {
+						category: true,
+						subcategory: { include: { category: true } }
+					}
+				})
+			]);
+
+			return {
+				data: {
+					menus,
+					subMenus,
+					slides,
+					categories,
+					subcategories,
+					products
+				}
+			};
+		} catch (e) {
+			console.error('[ERROR] findAllData:', e);
 			return { prismaError: e };
 		}
 	}
